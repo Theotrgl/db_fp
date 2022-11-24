@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
             style={styles.searchbar}
             placeholder="Search"
             value={searchQuery}
-            onChangeText={setSearchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
 
           />
       </View>
