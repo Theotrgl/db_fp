@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:160903437769Ps@localhost:3306/primalgames"
+}
+
+model game {
+  id             Int         @id @default(autoincrement())
+  title          String      @db.VarChar(100)
+  description    String      @db.Text
+  developer      String      @db.VarChar(40)
+  publisher      String      @db.VarChar(40)
+  images         Json
+  price          Decimal
+  average_rating Float       @default(0)
+  genres         genre[]
+  ratings        ratings[]
+  platforms      platforms[]
+  // this is to satisfy prisma
+  user         user[]
+  bundle_item  bundle_item[]
+  transactions transactions[]
+  on_sale      on_sale[]
+  cart         cart[]
+}
+
+model genre {
+  id    String @id @default(uuid())
+  name  String @db.VarChar(20)
+  games game[]
+}
+
+model ratings {
+  id      String   @id @default(uuid())
+  game    game     @relation(fields: [game_id], references: [id])
+  game_id Int
+  user    user     @relation(fields: [user_id], references: [id])
+  user_id Int
+  rating  Int      @db.UnsignedTinyInt()
+  date    DateTime @default(now())
+  comment String?  @db.Text
+}
+
+model platforms {
+  id       String @id @default(uuid())
+  platform String @db.VarChar(30)
+  game game[]
+}
+
+model user {
+  id               Int              @id @default(autoincrement())
+  username         String           @unique @db.VarChar(24)
+  email            String           @unique @db.VarChar(50)
+  hash             String           @db.VarChar(120)
+  ratings          ratings[]
+  cart             game[]
+  transactions     transactions[]
+  payment_method   payment_method[]
+  carts            cart[]
+  friends          friend_list[]    @relation("friend")
+  symmetricfriends friend_list[]    @relation("symmetricfriend")
+}
+
+model friend_list {
+  id       Int     @id @default(autoincrement())
+  a        user    @relation("friend", fields: [a_id], references: [id])
+  a_id     Int
+  b        user    @relation("symmetricfriend", fields: [b_id], references: [id])
+  b_id     Int
+  accepted Boolean
+  @@unique([a_id, b_id])
+}
+
+model cart {
+  id      String @id @default(uuid())
+  user    user   @relation(fields: [user_id], references: [id])
+  user_id Int
+  game    game   @relation(fields: [game_id], references: [id])
+  game_id Int
+}
+
+model bundles {
+  id          String        @id @default(uuid())
+  name        String        @db.VarChar(70)
+  price       Decimal
+  bundle_item bundle_item[]
+}
+
+model bundle_item {
+  id        String  @id @default(uuid())
+  game      game    @relation(fields: [game_id], references: [id])
+  game_id   Int
+  bundle    bundles @relation(fields: [bundle_id], references: [id])
+  bundle_id String
+}
+
+model on_sale {
+  id       String @id @default(uuid())
+  game     game   @relation(fields: [game_id], references: [id])
+  game_id  Int
+  discount Int    @db.UnsignedTinyInt()
+}
+
+model transactions {
+  id                String         @id @default(uuid())
+  game              game           @relation(fields: [game_id], references: [id])
+  game_id           Int
+  user              user           @relation(fields: [user_id], references: [id])
+  user_id           Int
+  createdAt         DateTime       @default(now())
+  payment_method    payment_method @relation(fields: [payment_method_id], references: [id])
+  payment_method_id String
+}
+
+model payment_method {
+  id              String   @id @default(uuid())
+  description     String   @db.VarChar(20)
+  card_number     String?  @db.VarChar(17)
+  expiration_date DateTime
+  user            user     @relation(fields: [userId], references: [id])
+  userId          Int
+  transactions transactions[] // This exist to satisfy prisma
+}
