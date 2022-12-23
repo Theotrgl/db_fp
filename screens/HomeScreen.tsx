@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View, Text, Dimensions, Image } from "react-native";
+import { ScrollView, View, Text, Dimensions, Image, TouchableHighlight } from "react-native";
 import { RootTabScreenProps } from "../types";
 import { Searchbar, Chip, Button } from "react-native-paper";
 import CarouselCards from "../components/CarouselCards";
@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
             style={styles.searchbar}
             placeholder="Search"
             value={searchQuery}
-            onChangeText={setSearchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
 
           />
       </View>
@@ -61,6 +61,14 @@ const HomeScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
         </View>
         <View style={styles.container3}>
           <Text style={styles.features}>Popular Titles</Text>
+            <TouchableHighlight onPress={() => console.log("Hello world")}>
+              <View>
+                <Image source={require('../assets/images/simple.jpg')} style={styles.pop} />
+                <Text style={styles.next}>Simple</Text>
+                <Text style={styles.next}>Android</Text>
+                <Text style={styles.next}>Action</Text>
+              </View>
+            </TouchableHighlight>
         </View>
       </ScrollView>
     </React.Fragment>
@@ -125,6 +133,30 @@ const styles = EStyleSheet.create({
     top: "30%",
     borderRadius: 30,
     elevation: 2,
+  },
+
+  pop: {
+    left: "2rem",
+    width: "9rem",
+    height: "6rem",
+  },
+
+  next: {
+    fontSize: "1rem",
+    left: "13rem",
+    bottom: "5.5rem",
+  },
+
+  platform: {
+    fontSize: "1rem",
+    left: "13rem",
+    bottom: "5.5rem",
+  },
+
+  genre: {
+    fontSize: "1rem",
+    left: "13rem",
+    bottom: "5.5rem",
   }
 
 })

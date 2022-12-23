@@ -18,8 +18,8 @@ import {
     constructor(private userService: UserService) {}
 
     @Post('addGame')
-    addGame(@GetUser('id') userId: number, @Body('game') game_id: number) {
-      console.log(game_id);
+    addGame(@Body('id') userId: number, @Body('game') game_id: number) {
+      console.log(userId);
       return this.userService.AddGame(userId, game_id);
     }
 

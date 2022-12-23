@@ -9,7 +9,6 @@ import useColorScheme from '../hooks/useColorScheme';
 import { UserStore } from "../redux/reducers/authenticator_reducer";
 import { loginAction } from "../redux/actions/authentiAction";
 
-
 const SignUpScreen = ({navigation} : {navigation: any}) => {
   const [user, setUser] = React.useState('');
   const [password, setPass] = React.useState('');

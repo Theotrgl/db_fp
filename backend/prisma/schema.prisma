@@ -37,7 +37,7 @@ model genre {
 }
 
 model ratings {
-  id      String   @id @default(uuid())
+  id      Int   @id @default(autoincrement())
   game    game     @relation(fields: [game_id], references: [id])
   game_id Int
   user    user     @relation(fields: [user_id], references: [id])
@@ -59,7 +59,7 @@ model user {
   email            String           @unique @db.VarChar(50)
   hash             String           @db.VarChar(120)
   ratings          ratings[]
-  cart             game[]
+  games            game[]
   transactions     transactions[]
   payment_method   payment_method[]
   carts            cart[]
@@ -74,7 +74,6 @@ model friend_list {
   b        user    @relation("symmetricfriend", fields: [b_id], references: [id])
   b_id     Int
   accepted Boolean
-  @@unique([a_id, b_id])
 }
 
 model cart {

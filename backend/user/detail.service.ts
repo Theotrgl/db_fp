@@ -25,16 +25,15 @@ export class UserService {
   }
 
   async AddGame(userId: number, game_id: number) {
-    const user = await this.prisma.user.update({
+    const user = await this.prisma.game.update({
       where: {
-        id: userId,
+        id: Number(game_id),
       },
       data: {
-        ratings: {
-          create: 
+        user: {
+          connect: 
             {
-              game_id: game_id,
-              rating: null,
+              id: Number(userId), 
             }
     }}});
   }
