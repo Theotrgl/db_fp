@@ -10,6 +10,6 @@ import {
     b_id: number;
 
     @IsNotEmpty()
-    accepted: boolean;
+    accepted: number;
   }
   

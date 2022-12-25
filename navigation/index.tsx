@@ -126,16 +126,6 @@ export function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{
-          headerShown: false,
-          title: "Search",
-          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
-          tabBarActiveTintColor: 'black',
-        }}
-      />
-      <BottomTab.Screen
         name="Library"
         component={LibraryScreen}
         options={{

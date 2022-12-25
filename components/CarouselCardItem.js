@@ -8,7 +8,7 @@ const CarouselCardItem = ({ item, index }) => {
 
   return (
     <View style={styles.container1} key={index}>
-      <TouchableHighlight style={styles.imageBox} underlayColor={'none'} onPress={console.log("Game Page redirect")}>
+      <TouchableHighlight style={styles.imageBox} underlayColor={'black'} onPress={() => console.log("Game Page redirect")}>
         <Image
           source={{ uri: item.imgUrl}}
           style={styles.image}

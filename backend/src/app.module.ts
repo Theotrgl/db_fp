@@ -7,6 +7,8 @@ import { UserModule } from 'user/detail.module';
 import { GameModule } from 'game/game.module';
 import { TransactionModule } from 'transactions/transaction.module';
 import { FriendModule } from 'friend/friend.module';
+import { GenreModule } from 'genre/genre.module';
+import { PlatformModule } from 'platform/platform.module';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { FriendModule } from 'friend/friend.module';
     UserModule,
     GameModule,
     TransactionModule,
-    FriendModule
+    FriendModule,
+    GenreModule,
+    PlatformModule
   ],
 })
 export class AppModule {}

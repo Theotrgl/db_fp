@@ -22,7 +22,7 @@ import {
         }
 
     @Post('delete')
-    deleteFriend(@Body() id: number) {
+    deleteFriend(@Body('id') id: number) {
         return this.friendService.deleteFriend(id);
         }
 

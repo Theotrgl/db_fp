@@ -12,7 +12,6 @@ import {
   import { EditUserDto } from './dto';
   import { UserService } from './detail.service';
   
-  @UseGuards(JwtGuard)
   @Controller('users')
   export class UserController {
     constructor(private userService: UserService) {}

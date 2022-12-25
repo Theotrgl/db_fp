@@ -17,20 +17,13 @@ import { create } from 'domain';
     ) {}
   
     async addFriend(dto: friendDto) {
-
       try{
-        const friend = await this.prisma.user.update({
-            where: {
-                id: dto.a_id,
-            },
+        const friend = await this.prisma.friend_list.create({
             data: {
-              friends: {
-                create: {
-                b_id: dto.b_id,
-                accepted: dto.accepted
-              }
+              a_id: Number(dto.a_id),
+              b_id: Number(dto.b_id),
+              accepted: Boolean(Number(dto.accepted)),
             },
-          }
         });
     }
       catch (error) {
@@ -43,10 +36,11 @@ import { create } from 'domain';
   }
 
     async deleteFriend(id : number) {
+      console.log(Number(id));
       try {
-        const friend = await this.prisma.friend_list.delete({
+        const friend = await this.prisma.friend_list.deleteMany({
           where: {
-            id: id,
+            id: Number(id),
           },
         });
   
@@ -68,7 +62,7 @@ import { create } from 'domain';
           data: {
             a_id: dto.a_id,
             b_id: dto.b_id,
-            accepted: dto.accepted
+            accepted: Boolean(Number(dto.accepted))
           },
         });
   

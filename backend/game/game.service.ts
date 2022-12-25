@@ -27,6 +27,34 @@ import { ConfigService } from '@nestjs/config';
             price: dto.price,
           },
         });
+
+        const gameGenre = await this.prisma.genre.update({
+          where: {
+            name: dto.genres,
+          },
+          data: {
+            games: {
+              connect: {
+                id: game.id,
+              },
+            },
+          },
+        });
+
+        const gamePlatform = await this.prisma.platforms.update({
+          where: {
+            platform: dto.platforms,
+          },
+          data: {
+            game: {
+              connect: {
+                id: game.id,
+              },
+            },
+          },
+        });
+
+        return { message:'Game created successfully' };
   
       } catch (error) {
         if (

@@ -56,13 +56,17 @@ export class UserService {
 
 
   async getGames(userId: number) {
-    const user =  this.prisma.ratings.findMany({
+    const userGame =  this.prisma.game.findMany({
         where: {
-          user_id: userId,
+          user: { 
+            some: {
+              id: userId,
+            }
+          }
         },
       });
     
-    return user;
+    return userGame;
     
   }
 }

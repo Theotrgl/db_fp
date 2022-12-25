@@ -31,8 +31,7 @@ model game {
 }
 
 model genre {
-  id    String @id @default(uuid())
-  name  String @db.VarChar(20)
+  name  String @id @db.VarChar(20)
   games game[]
 }
 
@@ -49,7 +48,7 @@ model ratings {
 
 model platforms {
   id       String @id @default(uuid())
-  platform String @db.VarChar(30)
+  platform String @unique @db.VarChar(30)
   game game[]
 }
 
@@ -73,7 +72,7 @@ model friend_list {
   a_id     Int
   b        user    @relation("symmetricfriend", fields: [b_id], references: [id])
   b_id     Int
-  accepted Boolean
+  accepted Boolean 
 }
 
 model cart {
