@@ -27,13 +27,18 @@ import {
       return this.userService.transaction(userId, game_id ,payment_method);
     }
 
+    @Post('addPaymentMethod')
+    addPaymentMethod(@Body('id') userId: number, @Body('pay') payment_method: string) {
+      return this.userService.addPaymentMethod(userId, payment_method);
+    }
+
     @Get('me')
     getMe(@GetUser() user: user) {
       return user;
     }
 
     @Get('games')
-    getGames(@GetUser('id') userId: number) {
+    getGames(@Body('id') userId: number) {
       return this.userService.getGames(userId);
     }
   

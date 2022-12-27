@@ -15,6 +15,25 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
   const [confirm, setCon] = React.useState('');
   const colorScheme = useColorScheme();
 
+  const [response, setResponse] = React.useState(null);
+
+  const fetchData = async (userEmail: string, userPassword: string, userName : string) =>  {
+      const data = { email: userEmail, password: userPassword, username:  userName};
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      const res = await fetch('https://bb24-61-247-34-131.ngrok.io/auth/signup', options);
+      const responseData : any = await res.json();
+
+      setResponse(responseData);
+  };
+
+
+
   return (
     <React.Fragment>
       <View>
@@ -55,10 +74,16 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
         <Button 
           onPress={() => { 
             if(password === confirm && password.length >= 8 && user.length >= 1){
+              fetchData(user, password, "Pewr");
+              if(response.hasOwnProperty('access_token')){
                 UserStore.dispatch({type: "signup"});
+              }
+              else{
+                alert("Username/Email is taken");
+              }
            }
            else{
-                alert("Passwords don't match/is too short or Username is empty/taken");
+                alert("Passwords don't match/is too short or Username/Email is empty/taken");
            }
          }}
           uppercase={false}

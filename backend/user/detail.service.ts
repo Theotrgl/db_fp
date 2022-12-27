@@ -24,6 +24,21 @@ export class UserService {
     return user;
   }
 
+  async addPaymentMethod (userId: number, payment_method: string) {
+    const pay = await this.prisma.payment_method.create({
+      data: {
+        description: String(payment_method),
+        card_number: String(),
+        expiration_date: String(1234),
+        user: {
+          connect: { id: Number(1) },    
+        }
+      }
+    })
+
+    return { message: "Payment method added" };
+  };
+
   async AddGame(userId: number, game_id: number) {
     const user = await this.prisma.game.update({
       where: {
@@ -60,7 +75,7 @@ export class UserService {
         where: {
           user: { 
             some: {
-              id: userId,
+              id: Number(userId),
             }
           }
         },

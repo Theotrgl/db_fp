@@ -29,12 +29,10 @@ import {
     @IsNotEmpty()
     price: number;
 
-    @IsString()
     @IsNotEmpty()
-    genres: string;
+    genres: string[];
     
-    @IsString()
     @IsNotEmpty()
-    platforms: string;
+    platforms: string[];
   }
   

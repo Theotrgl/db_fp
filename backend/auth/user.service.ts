@@ -43,6 +43,8 @@ export class AuthService {
       }
       throw error;
     }
+
+    return { message: 'User created successfully'}
   }
 
   async signin(dto: AuthDto) {
