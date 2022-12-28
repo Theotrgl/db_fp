@@ -33,6 +33,8 @@ import { create } from 'domain';
           ) 
         throw error;
       }
+
+      return { message: 'Done' };
   }
 
     async deleteFriend(id : number) {
@@ -57,15 +59,13 @@ import { create } from 'domain';
       try {
         const friend = await this.prisma.friend_list.update({
           where: {
-            id: id,
+            id: Number(id),
           },
           data: {
-            a_id: dto.a_id,
-            b_id: dto.b_id,
             accepted: Boolean(Number(dto.accepted))
           },
         });
-  
+        return { message: 'Done' };
       } catch (error) {
         if (
           error instanceof
@@ -73,6 +73,7 @@ import { create } from 'domain';
         ) 
         throw error;
       }
+
     }
 
     async getFriendState(a_id : number, b_id : number) {
@@ -99,12 +100,33 @@ import { create } from 'domain';
       try {
         const friend = await this.prisma.friend_list.findMany({
           where: {
-            a_id: id,
+            a_id: Number(id),
             accepted: true
           },
         });
 
-  
+        return friend;
+
+      } catch (error) {
+        if (
+          error instanceof
+          PrismaClientKnownRequestError
+        ) 
+        throw error;
+      }
+    }
+
+    async getFriendRequest(id : number) {
+      try {
+        const friend = await this.prisma.friend_list.findMany({
+          where: {
+            a_id: Number(id),
+            accepted: false
+          },
+        });
+
+        return friend;
+
       } catch (error) {
         if (
           error instanceof

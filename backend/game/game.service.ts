@@ -148,6 +148,56 @@ import { ConfigService } from '@nestjs/config';
         throw error;
       }
     }
+
+    async getAllGamesGenre(genre : string) {
+      try {
+        const game = await this.prisma.game.findMany(
+          {
+            where: {
+              genres: {
+                some: {
+                  name: String(genre),
+                },
+              },
+          }
+        }
+        );
+        return game;
+  
+      } catch (error) {
+        if (
+          error instanceof
+          PrismaClientKnownRequestError
+        ) 
+        
+        throw error;
+      }
+    }
+
+    async getAllGamesPlatform(platform : string) {
+      try {
+        const game = await this.prisma.game.findMany(
+          {
+            where: {
+              platforms: {
+                some: {
+                  platform: String(platform),
+                },
+              },
+          }
+        }
+        );
+        return game;
+  
+      } catch (error) {
+        if (
+          error instanceof
+          PrismaClientKnownRequestError
+        ) 
+        
+        throw error;
+      }
+    }
   
   }
   

@@ -7,15 +7,16 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import Navigation from "../navigation";
 import useColorScheme from '../hooks/useColorScheme';
 import { UserStore } from "../redux/reducers/authenticator_reducer";
+import { access_store } from "../redux/reducers/access_token";
 import { loginAction } from "../redux/actions/authentiAction";
 
 const SignUpScreen = ({navigation} : {navigation: any}) => {
   const [user, setUser] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [password, setPass] = React.useState('');
   const [confirm, setCon] = React.useState('');
   const colorScheme = useColorScheme();
 
-  const [response, setResponse] = React.useState(null);
 
   const fetchData = async (userEmail: string, userPassword: string, userName : string) =>  {
       const data = { email: userEmail, password: userPassword, username:  userName};
@@ -26,10 +27,9 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
           'Content-Type': 'application/json',
         },
       };
-      const res = await fetch('https://bb24-61-247-34-131.ngrok.io/auth/signup', options);
+      const res = await fetch('https://f670-61-247-34-131.ngrok.io/auth/signup', options);
       const responseData : any = await res.json();
-
-      setResponse(responseData);
+      return responseData;
   };
 
 
@@ -38,13 +38,22 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
     <React.Fragment>
       <View>
         <Text style={styles.register}>Register</Text>
-        <Text style={styles.text}>Username/Email</Text>
+
+        <Text style={styles.text}>Username</Text>
         <TextInput
          mode="outlined"
-         placeholder="Username/Email"
+         placeholder="Username"
          style={styles.input}
          value={user} 
          onChangeText={text => setUser(text)}/>
+
+        <Text style={styles.text}>Email</Text>
+        <TextInput
+         mode="outlined"
+         placeholder="Email"
+         style={styles.input}
+         value={email} 
+         onChangeText={text => setEmail(text)}/>
 
         <Text style={styles.text}>Password</Text>
         <TextInput
@@ -72,11 +81,15 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
         </Text>
 
         <Button 
-          onPress={() => { 
+          onPress={async () => { 
             if(password === confirm && password.length >= 8 && user.length >= 1){
-              fetchData(user, password, "Pewr");
-              if(response.hasOwnProperty('access_token')){
+              const response = await fetchData(email, password, user);
+              if(response === null){
+                alert("Denied");
+              }
+              else if(response.hasOwnProperty('access_token')){
                 UserStore.dispatch({type: "signup"});
+                access_store.dispatch({type: "UPDATE_VALUE", payload: response.access_token});
               }
               else{
                 alert("Username/Email is taken");
@@ -125,7 +138,7 @@ const styles = EStyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#1689BA',
         width: "84%",
-        height: "10%",
+        height: "8%",
         top: "110%",
         borderRadius: 30,
         elevation: 5,
@@ -138,7 +151,7 @@ const styles = EStyleSheet.create({
         height: "12rem",
         width: "10rem",
         alignSelf: "center",
-        top: "39rem",
+        top: "42rem",
       }
 
 })

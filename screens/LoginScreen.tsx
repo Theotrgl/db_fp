@@ -4,10 +4,25 @@ import { RootTabScreenProps } from "../types";
 import { TextInput, Button} from "react-native-paper";
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { UserStore }from "../redux/reducers/authenticator_reducer";
+import { access_store } from "../redux/reducers/access_token";
 
 const LogInScreen = ({navigation} : {navigation: any}) => {
     const [user, setUser] = React.useState('');
     const [password, setPass] = React.useState('');
+
+    const fetchData = async (userEmail: string, userPassword: string) =>  {
+      const data = { email: userEmail, password: userPassword};
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      const res = await fetch('https://f670-61-247-34-131.ngrok.io/auth/signin', options);
+      const responseData : any = await res.json();
+      return responseData;
+  };
   
     return (
       <React.Fragment>
@@ -38,13 +53,20 @@ const LogInScreen = ({navigation} : {navigation: any}) => {
           </Text>
   
           <Button 
-            onPress={() => {
+            onPress={ async () => {
                 if(password && password.length >= 8 && user.length >= 1){
-                    UserStore.dispatch({type: "login"});
-               }
-               else{
+                    const response = await fetchData(user, password);
+                    if(response === null){ 
+                        alert("Denied");
+                    }
+                    else if(response.hasOwnProperty('access_token')){
+                      UserStore.dispatch({type: "login"});
+                      access_store.dispatch({type: "UPDATE_VALUE", payload: response.access_token});
+                  }
+                    else{
                     alert("User does not exist or password is wrong");
-               }
+                     }
+                  }
             } }
             uppercase={false}
             color={'white'}

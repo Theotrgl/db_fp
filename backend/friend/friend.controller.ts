@@ -27,7 +27,7 @@ import {
         }
 
     @Patch('update')
-    updateFriend(@Body() dto: friendDto, id: number) {
+    updateFriend(@Body() dto: friendDto, @Body('FriendId') id: number) {
         return this.friendService.updateFriend(dto, id);
         }
 
@@ -37,7 +37,12 @@ import {
         }
 
     @Get('list')
-    getFriendList(id : number) {
+    getFriendList(@Body('id') id : number) {
         return this.friendService.getFriendList(id);
         }
+
+    @Get('request')
+    getFriendRequest(@Body('id') id : number) {
+        return this.friendService.getFriendRequest(id);
+        }    
   }

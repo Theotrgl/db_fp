@@ -25,6 +25,7 @@ export class AuthService {
         data: {
           email: dto.email,
           username: dto.username,
+          refresh_token: "",
           hash,
         },
       });
@@ -72,10 +73,7 @@ export class AuthService {
     return this.signToken(user.id, user.email);
   }
 
-  async signToken(
-    userId: number,
-    email: string,
-  ): Promise<{ access_token: string }> {
+  async signToken( userId: number, email: string,): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
       email,
@@ -85,13 +83,33 @@ export class AuthService {
     const token = await this.jwt.signAsync(
       payload,
       {
-        expiresIn: '15m',
+        expiresIn: '1h',
         secret: secret,
       },
     );
 
     return {
       access_token: token,
+    };
+  }
+
+  async signRefreshToken( userId: number, email: string,): Promise<{ refresh_token: string }> {
+    const payload = {
+      sub: userId,
+      email,
+    };
+    const secret = 'not-so-secret';
+
+    const token = await this.jwt.signAsync(
+      payload,
+      {
+        expiresIn: '30d',
+        secret: secret,
+      },
+    );
+
+    return {
+      refresh_token: token,
     };
   }
 }

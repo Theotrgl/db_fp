@@ -57,6 +57,7 @@ model user {
   username         String           @unique @db.VarChar(24)
   email            String           @unique @db.VarChar(50)
   hash             String           @db.VarChar(120)
+  refresh_token    String           @db.VarChar(120)
   ratings          ratings[]
   games            game[]
   transactions     transactions[]

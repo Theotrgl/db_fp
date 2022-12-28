@@ -36,6 +36,16 @@ import {
       return this.gameService.getGame(id);
     } 
 
+    @Get('allgenre')
+    allGenre(@Body('genre') genre: string) {
+      return this.gameService.getAllGamesGenre(genre);
+    }
+
+    @Get('allplatform')
+    allPlatform(@Body('platform') platform: string) {
+      return this.gameService.getAllGamesPlatform(platform);
+    }
+
     @Get('all')
     all() {
       return this.gameService.getAllGames();
