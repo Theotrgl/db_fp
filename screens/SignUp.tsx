@@ -7,7 +7,7 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import Navigation from "../navigation";
 import useColorScheme from '../hooks/useColorScheme';
 import { UserStore } from "../redux/reducers/authenticator_reducer";
-import { access_store } from "../redux/reducers/access_token";
+import { access_store, refresh_store } from "../redux/reducers/access_token";
 import { loginAction } from "../redux/actions/authentiAction";
 
 const SignUpScreen = ({navigation} : {navigation: any}) => {
@@ -27,8 +27,9 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
           'Content-Type': 'application/json',
         },
       };
-      const res = await fetch('https://f670-61-247-34-131.ngrok.io/auth/signup', options);
+      const res = await fetch('https://a3ac-61-247-34-131.ngrok.io/auth/signup', options);
       const responseData : any = await res.json();
+      console.log(responseData);
       return responseData;
   };
 
@@ -89,6 +90,7 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
               }
               else if(response.hasOwnProperty('access_token')){
                 UserStore.dispatch({type: "signup"});
+                refresh_store.dispatch({type: "UPDATE_VALUE", payload: response.refresh_token});
                 access_store.dispatch({type: "UPDATE_VALUE", payload: response.access_token});
               }
               else{

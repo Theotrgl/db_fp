@@ -51,13 +51,13 @@ const ProfileScreen = () => {
           'Authorization' : 'Bearer' + ' ' + token.access.access_token,
         },
       };
-      const res = await fetch('https://d0fa-61-247-34-131.ngrok.io/users/me', options);
+      const res = await fetch('https://d6bb-61-247-34-131.ngrok.io/users/me', options);
       try{
         const responseData : any = await res.json();
         return responseData;
       } catch(err){
         console.log(err);
-        const res = await fetch('https://d0fa-61-247-34-131.ngrok.io/users/me', options);
+        const res = await fetch('https://d6bb-61-247-34-131.ngrok.io/users/me', options);
         const responseData : any = await res.json();
         return responseData;
       }
@@ -93,8 +93,8 @@ const ProfileScreen = () => {
           style={styles.avatar}
           source={require("../assets/images/simple.jpg")}
         />
-        <Text style={styles.username}>{true ? (<ContentLoader active={true}  pRows={1} title={false} pHeight={30} pWidth={160} />) : response.username}</Text>
-        <Text style={styles.email}>{true ? (<ContentLoader active={true} pRows={1} title={false} pHeight={30} pWidth={270} />) : response.email}</Text>
+        <Text style={styles.username}>{isloading ? (<ContentLoader active={true}  pRows={1} title={false} pHeight={30} pWidth={160} />) : response.username}</Text>
+        <Text style={styles.email}>{isloading ? (<ContentLoader active={true} pRows={1} title={false} pHeight={30} pWidth={270} />) : response.email}</Text>
         <TouchableOpacity
           onPress={showSettingsModal}
           style={styles.button}><Text style={styles.text}>Edit Profile</Text></TouchableOpacity>

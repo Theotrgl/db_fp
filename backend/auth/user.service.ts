@@ -26,11 +26,24 @@ export class AuthService {
           email: dto.email,
           username: dto.username,
           refresh_token: "",
+          avatar: "",
           hash,
         },
       });
 
-      return this.signToken(user.id, user.email);
+      const refreshToken = this.signRefreshToken(user.id, user.email);
+      const access = this.signToken(user.id, user.email);
+
+      const refresh = await this.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          refresh_token: String((await refreshToken).refresh_token),
+        },
+      });
+
+      return { access_token : (await access).access_token, refresh_token: (await refreshToken).refresh_token} ;
     } catch (error) {
       if (
         error instanceof
@@ -78,7 +91,27 @@ export class AuthService {
       throw new ForbiddenException(
         'Credentials incorrect',
       );
-    return this.signToken(user.id, user.email);
+
+    const access = this.signToken(user.id, user.email);
+
+    return { access_token : (await access).access_token, refresh_token: (await user).refresh_token}
+  }
+
+  async refresh(refreshToken: string) {
+    // Validate the refresh token
+    // If the refresh token is valid, generate a new access token
+    // Return the new access token
+    const options = {secret: 'not-so-secret'}
+    const user = await this.prisma.user.findUnique({
+      where: {
+        refresh_token: refreshToken,
+      },
+    });
+    if (user) {
+      if(this.jwt.verify(user.refresh_token, options))
+        return this.signToken(user.id, user.email);
+    }
+    return null;
   }
 
   async signToken( userId: number, email: string,): Promise<{ access_token: string }> {
@@ -101,7 +134,7 @@ export class AuthService {
     };
   }
 
-  async signRefreshToken( userId: number, email: string,): Promise<{ refresh_token: string }> {
+  async signRefreshToken( userId: number, email : string): Promise<{ refresh_token: string }> {
     const payload = {
       sub: userId,
       email,

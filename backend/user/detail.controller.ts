@@ -1,17 +1,17 @@
 import {
-    Body,
-    Controller,
-    Get,
-    Patch,
-    Post,
-    Delete,
-    UseGuards,
-  } from '@nestjs/common';
-  import { user } from '@prisma/client';
-  import { GetUser } from 'decorator';
-  import { JwtGuard } from 'guard/jwt.guard';
-  import { EditUserDto } from './dto';
-  import { UserService } from './detail.service';
+   Body,
+   Controller,
+   Get,
+   Patch,
+   Post,
+   Delete,
+   UseGuards,
+} from '@nestjs/common';
+import { user } from '@prisma/client';
+import { GetUser } from 'decorator';
+import { JwtGuard } from 'guard/jwt.guard';
+import { EditUserDto } from './dto';
+import { UserService } from './detail.service';
 import { PayDto } from 'dto/pay.dto';
 import { AuthDto } from 'dto/auth.dto';
   

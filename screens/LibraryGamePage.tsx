@@ -10,7 +10,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 const height = Dimensions.get('window').height; const width = Dimensions.get('window').width;
 
-export const GamePageScreen = ({ route } : any) => {
+export const LibGamePageScreen = ({ route } : any) => {
   const { id, title, images, description, developer, publisher, price, average_rating } = route.params;
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isSearchModalVisible, setIsSearchVisible] = React.useState(false);
@@ -44,7 +44,7 @@ export const GamePageScreen = ({ route } : any) => {
             uppercase={false}
             color={'white'}
             style={styles.button}>
-            Get</Button>
+            Download</Button>
         </View>
       </ScrollView>
       </SafeAreaView>
@@ -159,4 +159,4 @@ const styles = EStyleSheet.create({
 
 
 
-export default GamePageScreen;
+export default LibGamePageScreen;
