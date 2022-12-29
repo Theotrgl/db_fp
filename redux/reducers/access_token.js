@@ -9,7 +9,7 @@ function accreducer(state = initialState, action) {
     case 'UPDATE_VALUE':
       return {
         ...state,
-        value: action.payload
+        access_token: action.payload
       };
     default:
       return state;

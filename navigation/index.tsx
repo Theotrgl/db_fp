@@ -3,7 +3,8 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
+import { authenSelector } from "../redux/reducers/authenticator_reducer";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -40,10 +41,12 @@ import { UserStore } from "../redux/reducers/authenticator_reducer";
 export default function Navigation({ colorScheme,}: { colorScheme: ColorSchemeName;}) {
   //possible change needed for re rendering method of the app of code below, unlikely to be future proof
   const [render, setRender] = React.useState(false);
+  
   let authentication : boolean = UserStore.getState().authen.authentication;
   //this code below too
-  UserStore.subscribe(() => setRender(true));
-  
+  UserStore.subscribe(() => setRender(authentication));
+  console.log(authentication);
+
   //ternary operator used to check if user is authenticated and logged in 
   //next few attempts should direct it immediately to the home page
   return (

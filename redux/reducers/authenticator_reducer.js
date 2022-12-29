@@ -25,3 +25,4 @@ const initialState = {
   export default counter_reducer;
 
 export const UserStore = configureStore({reducer:{authen: counter_reducer}});
+export const authenSelector = state => state.authen.authentication;

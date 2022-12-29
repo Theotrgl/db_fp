@@ -22,7 +22,7 @@ import {
   
     @HttpCode(HttpStatus.OK)
     @Post('signin')
-    signin(@Body() dto: AuthDto) {
-      return this.authService.signin(dto);
+    signin(@Body('user') user : string, @Body('password') password : string) {
+      return this.authService.signin(user, password);
     }
   }

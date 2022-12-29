@@ -11,17 +11,24 @@ const LogInScreen = ({navigation} : {navigation: any}) => {
     const [password, setPass] = React.useState('');
 
     const fetchData = async (userEmail: string, userPassword: string) =>  {
-      const data = { email: userEmail, password: userPassword};
-      const options = {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      const res = await fetch('https://f670-61-247-34-131.ngrok.io/auth/signin', options);
-      const responseData : any = await res.json();
-      return responseData;
+      try {
+        const data = { user: userEmail, password: userPassword};
+        const options = {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        };
+        const res = await fetch('https://d0fa-61-247-34-131.ngrok.io/auth/signin', options);
+        const responseData : any = await res.json();
+        return responseData;
+      }
+      catch(err){
+        alert("Connection Error");
+        console.log(err);
+      }
+    
   };
   
     return (
@@ -54,10 +61,13 @@ const LogInScreen = ({navigation} : {navigation: any}) => {
   
           <Button 
             onPress={ async () => {
+                console.log("Button pressed");
                 if(password && password.length >= 8 && user.length >= 1){
-                    const response = await fetchData(user, password);
-                    if(response === null){ 
-                        alert("Denied");
+                  try {
+                    const response : any = await fetchData(user, password);
+                    console.log(response);
+                    if(response === undefined){ 
+                        alert("Connection Error");
                     }
                     else if(response.hasOwnProperty('access_token')){
                       UserStore.dispatch({type: "login"});
@@ -67,7 +77,12 @@ const LogInScreen = ({navigation} : {navigation: any}) => {
                     alert("User does not exist or password is wrong");
                      }
                   }
+                  catch(err){
+                    console.log(err);
+                    alert("Connection Error");
+                  }
             } }
+          }
             uppercase={false}
             color={'white'}
             style={styles.button}>

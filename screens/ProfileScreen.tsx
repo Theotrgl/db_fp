@@ -1,7 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
-import { View, Text, Image, Button, Modal, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, Button, Modal, TouchableOpacity, Alert } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
+import { access_store } from "../redux/reducers/access_token";
+import { UserStore } from "../redux/reducers/authenticator_reducer";
+import ContentLoader, { FacebookLoader, InstagramLoader } from 'react-native-easy-content-loader';
 import { RootTabScreenProps } from "../types";
 
 const TransactionsScreen = () => (
@@ -34,6 +37,54 @@ const ProfileScreen = () => {
   const showPaymentMethodModal = () => setIsPaymentMethodModalVisible(true);
   const hidePaymentMethodModal = () => setIsPaymentMethodModalVisible(false);
 
+  const token = access_store.getState();
+
+  const [response, setResponse] = useState('');
+  const [showBox, setShowBox] = useState(true);
+  const [isloading, setIsLoading] = useState(true);
+
+  const fetchData = async () =>  {
+    try{
+      const options = {
+        method: 'GET',
+        headers: {
+          'Authorization' : 'Bearer' + ' ' + token.access.access_token,
+        },
+      };
+      const res = await fetch('https://d0fa-61-247-34-131.ngrok.io/users/me', options);
+      try{
+        const responseData : any = await res.json();
+        return responseData;
+      } catch(err){
+        console.log(err);
+        const res = await fetch('https://d0fa-61-247-34-131.ngrok.io/users/me', options);
+        const responseData : any = await res.json();
+        return responseData;
+      }
+
+      return 0;
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
+  
+  async function main(){
+    const response : any = await fetchData();
+    setResponse(response);
+    if (response) {
+      setIsLoading(false);
+    }
+    console.log(response);
+   };
+  
+  useEffect(() => {
+    console.log('useEffect');
+    main();
+  }
+  , []);
+
+
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -42,8 +93,8 @@ const ProfileScreen = () => {
           style={styles.avatar}
           source={require("../assets/images/simple.jpg")}
         />
-        <Text style={styles.username}>User Name</Text>
-        <Text style={styles.email}>user@email.com</Text>
+        <Text style={styles.username}>{true ? (<ContentLoader active={true}  pRows={1} title={false} pHeight={30} pWidth={160} />) : response.username}</Text>
+        <Text style={styles.email}>{true ? (<ContentLoader active={true} pRows={1} title={false} pHeight={30} pWidth={270} />) : response.email}</Text>
         <TouchableOpacity
           onPress={showSettingsModal}
           style={styles.button}><Text style={styles.text}>Edit Profile</Text></TouchableOpacity>
@@ -60,6 +111,29 @@ const ProfileScreen = () => {
         <TouchableOpacity
           onPress={showTransactionsModal}
           style={styles.button}><Text style={styles.text}>Transactions</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+          onPress={() => {
+            Alert.alert(
+              "",
+              "Are you sure you want to log out?",
+              [
+                {
+                  text: "Yes",
+                  onPress: () => {
+                    setShowBox(false);
+                    UserStore.dispatch({type: 'logout'});
+                    access_store.dispatch({type: 'UPDATE_VALUE', payload: {access_token: ''}});
+                  },
+                },
+                {
+                  text: "No",
+                },
+              ]
+            );
+          }}
+          style={styles.button}><Text style={styles.text}>Log out</Text>
           </TouchableOpacity>
       </View>
       
@@ -121,7 +195,7 @@ const styles = EStyleSheet.create({
   text:{
     color: 'black',
     fontSize: "1rem",
-  }
+  },
 
 });
 
