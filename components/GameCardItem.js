@@ -4,13 +4,17 @@ import { View, Text, StyleSheet, Dimensions, Image, TouchableHighlight } from "r
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
-const GameCardItem = ({ item, index }) => {
-
+const GameCardItem = (item) => {
+  let index = 2;
+  while( index < item.item.length){
+    
+  }
+  console.log(item.item["1"])
   return (
     <View style={styles.container1} key={index}>
       <TouchableHighlight style={styles.imageBox} underlayColor={'black'} onPress={() => console.log("Game Page redirect")}>
         <Image
-          source={{ uri: item.imgUrl}}
+          source={{ uri: item.item[String(index)]}}
           style={styles.image}
         />
       </TouchableHighlight>
@@ -25,7 +29,7 @@ const styles = StyleSheet.create({
     height: 200,
     right: 40,
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 1,
     width: ITEM_WIDTH,
     shadowColor: "#000",
     shadowOffset: {

@@ -20,9 +20,8 @@ import {
       return this.gameService.createGame(dto);
     }
   
-    @HttpCode(HttpStatus.OK)
     @Post('delete')
-    delete(@Body() id: number) {
+    delete(@Body('game') id: number) {
       return this.gameService.deleteGame(id);
     }
 

@@ -6,6 +6,8 @@ import { access_store } from "../redux/reducers/access_token";
 import { UserStore } from "../redux/reducers/authenticator_reducer";
 import ContentLoader, { FacebookLoader, InstagramLoader } from 'react-native-easy-content-loader';
 import { RootTabScreenProps } from "../types";
+import { Camera, CameraType } from 'expo-camera';
+import api from "../DatabaseConn";
 
 const TransactionsScreen = () => (
   <View style={styles.container}>
@@ -42,6 +44,7 @@ const ProfileScreen = () => {
   const [response, setResponse] = useState('');
   const [showBox, setShowBox] = useState(true);
   const [isloading, setIsLoading] = useState(true);
+  const navigation = useNavigation();
 
   const fetchData = async () =>  {
     try{
@@ -51,13 +54,13 @@ const ProfileScreen = () => {
           'Authorization' : 'Bearer' + ' ' + token.access.access_token,
         },
       };
-      const res = await fetch('https://d6bb-61-247-34-131.ngrok.io/users/me', options);
+      const res = await fetch(api + '/users/me', options);
       try{
         const responseData : any = await res.json();
         return responseData;
       } catch(err){
         console.log(err);
-        const res = await fetch('https://d6bb-61-247-34-131.ngrok.io/users/me', options);
+        const res = await fetch(api + '/users/me', options);
         const responseData : any = await res.json();
         return responseData;
       }
@@ -89,12 +92,16 @@ const ProfileScreen = () => {
     <React.Fragment>
       <View style={styles.container}>
         <Text style={styles.title}>Profile</Text>
+        <TouchableOpacity onPress={() => {
+          navigation.navigate("CameraPage")
+        }}>
         <Image
           style={styles.avatar}
-          source={require("../assets/images/simple.jpg")}
+          source={{uri : 'https://peternelsonsub.com/gallery_gen/6dc28991a95610dc0bd4f852c57d5d07.jpg'}}
         />
-        <Text style={styles.username}>{isloading ? (<ContentLoader active={true}  pRows={1} title={false} pHeight={30} pWidth={160} />) : response.username}</Text>
-        <Text style={styles.email}>{isloading ? (<ContentLoader active={true} pRows={1} title={false} pHeight={30} pWidth={270} />) : response.email}</Text>
+        </TouchableOpacity>
+        <Text style={styles.username}>{isloading ? (<ContentLoader active={true}  pRows={1} title={false} pHeight={30} pWidth={160} paragraphStyles={styles.load}/>) : response.username}</Text>
+        <Text style={styles.email}>{isloading ? (<ContentLoader active={true} pRows={1} title={false} pHeight={30} pWidth={270} paragraphStyles={styles.load}/>) : response.email}</Text>
         <TouchableOpacity
           onPress={showSettingsModal}
           style={styles.button}><Text style={styles.text}>Edit Profile</Text></TouchableOpacity>
@@ -164,24 +171,31 @@ const styles = EStyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "white"
   },
   title: {
+    top: "1.5rem",
     fontSize: "2rem",
     fontWeight: "bold",
     marginBottom: 16,
   },
   avatar: {
+    top: "1rem",
     width: "8rem",
     height: "8rem",
     borderRadius: 64,
     marginBottom: 16,
   },
   username: {
+    top: "1rem",
     fontSize: "1.5rem",
+    alignSelf: "center",
     marginBottom: "0.6rem",
   },
   email: {
+    top: "1rem",
     fontSize: "1rem",
+    alignSelf: "center",
     marginBottom: "10rem",
   },
 
@@ -193,9 +207,15 @@ const styles = EStyleSheet.create({
   },
 
   text:{
+    bottom: "2rem",
     color: 'black',
     fontSize: "1rem",
   },
+
+  load: {
+    alignSelf: "center",
+    top: "1rem",
+  }
 
 });
 

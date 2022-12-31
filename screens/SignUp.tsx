@@ -9,6 +9,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import { UserStore } from "../redux/reducers/authenticator_reducer";
 import { access_store, refresh_store } from "../redux/reducers/access_token";
 import { loginAction } from "../redux/actions/authentiAction";
+import api from "../DatabaseConn";
 
 const SignUpScreen = ({navigation} : {navigation: any}) => {
   const [user, setUser] = React.useState('');
@@ -27,7 +28,7 @@ const SignUpScreen = ({navigation} : {navigation: any}) => {
           'Content-Type': 'application/json',
         },
       };
-      const res = await fetch('https://a3ac-61-247-34-131.ngrok.io/auth/signup', options);
+      const res = await fetch(api + '/auth/signup', options);
       const responseData : any = await res.json();
       console.log(responseData);
       return responseData;

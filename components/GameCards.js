@@ -5,17 +5,17 @@ import GameCardItem, { SLIDER_WIDTH, ITEM_WIDTH } from './GameCardItem'
 import EStyleSheet from 'react-native-extended-stylesheet';
 import data from './data'
 
-const GameCards = () => {
+const GameCards = (prop) => {
   const [index, setIndex] = React.useState(0)
   const isCarousel = React.useRef(null)
-
+  
   return (
     <View style={styles.container}>
       <Carousel
         layout= "default"
         layoutCardOffset={0}
         ref={isCarousel}
-        data={data}
+        data={[prop.image]}
         renderItem={GameCardItem}
         sliderWidth={SLIDER_WIDTH}
         itemWidth={ITEM_WIDTH}
@@ -30,8 +30,8 @@ const GameCards = () => {
 const styles = EStyleSheet.create({
     container: {
         zindex: 1,
-        position: 'absolute',
-        top: "9rem",
+        position: 'relative',
+        top: "0.1rem",
         
     }
 })

@@ -39,6 +39,8 @@ import StartScreen from "../screens/StartUpScreen";
 import SignUpScreen from "../screens/SignUp";
 import LogInScreen from "../screens/LoginScreen";
 import { UserStore } from "../redux/reducers/authenticator_reducer";
+import CameraPage from "../screens/Camera";
+import CartPageScreen from "../screens/CartScreen";
 
 export default function Navigation({ colorScheme,}: { colorScheme: ColorSchemeName;}) {
   //possible change needed for re rendering method of the app of code below, unlikely to be future proof
@@ -83,6 +85,16 @@ function RootNavigator() {
       <Stack.Screen
         name="LibGamePage"
         component={LibGamePageScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CameraPage"
+        component={CameraPage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CartPage"
+        component={CartPageScreen}
         options={{ headerShown: false }}
       />
       <Stack.Group screenOptions={{ presentation: "modal" }}>

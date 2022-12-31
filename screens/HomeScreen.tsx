@@ -4,6 +4,7 @@ import { RootTabScreenProps } from "../types";
 import { Searchbar, Chip, Button } from "react-native-paper";
 import CarouselCards from "../components/CarouselCards";
 import SpecialCards from "../components/SpecialCards";
+import getHomeItems from "../components/data";
 import EStyleSheet from 'react-native-extended-stylesheet';
 import SafeViewAndroid from "../components/SafeViewAndroid";
 
@@ -28,11 +29,100 @@ const HomeScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isSearchModalVisible, setIsSearchVisible] = React.useState(false);
 
+  const [data, setData] = React.useState(null);
+  const [objectX, setX] = React.useState(null);
+  const [objectY, setY] = React.useState(null);
+  const [objectZ, setZ] = React.useState(null);
+  const [render, setRender] = React.useState(false);
+  
+  React.useEffect(() => {
+    async function fetchData() {
+      const homeItems = await getHomeItems();
+      setData(homeItems);
+    }
+
+    fetchData();
+    setRender(true);
+  }, []);
+
+  if(data != null && render == true){
+    let genresX = [];
+    let cont = 0;
+    while(data[0].genres.length > cont){
+      genresX.push(data[0].genres[cont].name);
+      cont++;
+    }
+
+    setX({
+      id: data[0].id,
+      title: data[0].title,
+      description: data[0].description,
+      developer: data[0].developer,
+      publisher: data[0].publisher,
+      images: data[0].images,
+      genre: genresX,
+      price: data[0].price,
+      average_rating: data[0].average_rating,
+    })
+
+    setRender(false);
+  }
+ 
+
+ if(data != null && render == true){
+  let genresY = [];
+  let cont = 0;
+  while(data[1].genres.length > cont){
+    genresY.push(data[1].genres[cont].name);
+    cont++;
+  }
+
+  setY({
+    id: data[1].id,
+    title: data[1].title,
+    description: data[1].description,
+    developer: data[1].developer,
+    publisher: data[1].publisher,
+    images: data[1].images,
+    genre: genresY,
+    price: data[1].price,
+    average_rating: data[1].average_rating,
+  })
+
+  setRender(false);
+}
+
+if(data != null && render == true){
+  let genresZ = [];
+  let cont = 0;
+  while(data[2].genres.length > cont){
+    genresZ.push(data[2].genres[cont].name);
+    cont++;
+  }
+
+  setZ({
+    id: data[2].id,
+    title: data[2].title,
+    description: data[2].description,
+    developer: data[2].developer,
+    publisher: data[2].publisher,
+    images: data[2].images,
+    genre: genresZ,
+    price: data[2].price,
+    average_rating: data[2].average_rating,
+  })
+
+  setRender(false);
+}
+
   return (
     <React.Fragment>
       <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
       <View style={styles.topView}>
       <Image source={require('../assets/images/minilogo.png')} style={styles.logo}/>
+      <TouchableHighlight style={styles.cartBox} underlayColor={'transparent'} onPress={() => navigation.navigate("CartPage")}>
+         <Image source={require('../assets/images/cart.png')} style={styles.cart}/>
+      </TouchableHighlight>
       <Searchbar
             style={styles.searchbar}
             placeholder="Search"
@@ -79,30 +169,30 @@ const HomeScreen = ({ navigation }: RootTabScreenProps<"Home">) => {
         </View>
         <View style={styles.container3}>
           <Text style={styles.features}>Popular Titles</Text>
-            <TouchableHighlight underlayColor={'transparent'} onPress={() => console.log("Hello world")}>
+            <TouchableHighlight underlayColor={'transparent'} onPress={() => navigation.navigate("GamePage", objectX)}>
               <View style={styles.popView}>
-                <Image source={require('../assets/images/simple.jpg')} style={styles.pop} />
-                <Text style={styles.next}>Simple</Text>
-                <Text style={styles.next}>Android</Text>
-                <Text style={styles.next}>Action</Text>
+                <Image source={data == null ? (require('../assets/images/simple.jpg')) : { uri: (data[0].images["1"])}} style={styles.pop} />
+                <Text style={styles.next}>{data == null ? "loading.." : (data[0].title.length < 15 ? data[0].title : data[0].title.substr(0,14) + "..")}</Text>
+                <Text style={styles.subNext}>{data == null ? "loading.." : (data[0].platforms[0].platform)}</Text>
+                <Text style={styles.subNext}>{data == null ? "loading.." : (data[0].genres[0].name)}</Text>
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight underlayColor={'transparent'} onPress={() => console.log("Hello world")}>
+            <TouchableHighlight underlayColor={'transparent'} onPress={() => navigation.navigate("GamePage", objectY)}>
               <View style={styles.popView}>
-                <Image source={require('../assets/images/simple.jpg')} style={styles.pop} />
-                <Text style={styles.next}>Simple</Text>
-                <Text style={styles.next}>Android</Text>
-                <Text style={styles.next}>Action</Text>
+                <Image source={data == null ? (require('../assets/images/simple.jpg')) : { uri: (data[1].images["1"])}} style={styles.pop} />
+                <Text style={styles.next}>{data == null ? "loading.." : (data[1].title.length < 15 ? data[1].title : data[1].title.substr(0,14) + "..")}</Text>
+                <Text style={styles.subNext}>{data == null ? "loading.." : (data[1].platforms[0].platform)}</Text>
+                <Text style={styles.subNext}>{data == null ? "loading.." : (data[1].genres[0].name)}</Text>
               </View>
             </TouchableHighlight>
 
-            <TouchableHighlight underlayColor={'transparent'} onPress={() => console.log("Hello world")}>
+            <TouchableHighlight underlayColor={'transparent'} onPress={() => navigation.navigate("GamePage", objectZ)}>
               <View style={styles.popView}>
-                <Image source={require('../assets/images/simple.jpg')} style={styles.pop} />
-                <Text style={styles.next}>Simple</Text>
-                <Text style={styles.next}>Android</Text>
-                <Text style={styles.next}>Action</Text>
+                <Image source={data == null ? (require('../assets/images/simple.jpg')) : { uri: (data[2].images["1"])}} style={styles.pop} />
+                <Text style={styles.next}>{data == null ? "loading.." : (data[2].title.length < 15 ? data[2].title : data[2].title.substr(0,14) + "..")}</Text>
+                <Text style={styles.subNext}>{data == null ? "loading.." : (data[2].platforms[0].platform)}</Text>
+                <Text style={styles.subNext}>{data == null ? "loading.." : (data[2].genres[0].name)}</Text>
               </View>
             </TouchableHighlight>
         </View>
@@ -186,13 +276,19 @@ const styles = EStyleSheet.create({
   },
 
   pop: {
-    left: "2rem",
-    width: "9rem",
+    left: "1rem",
+    width: "11rem",
     height: "6rem",
   },
 
   next: {
     fontSize: "1rem",
+    left: "13rem",
+    bottom: "5.5rem",
+  },
+
+  subNext: {
+    fontSize: "0.7rem",
     left: "13rem",
     bottom: "5.5rem",
   },
@@ -207,6 +303,17 @@ const styles = EStyleSheet.create({
     fontSize: "1rem",
     left: "13rem",
     bottom: "5.5rem",
+  },
+
+  cart : {
+    height: "2rem",
+    width: "2rem",
+  },
+
+  cartBox : {
+    position: 'absolute',
+    top: "1.7rem",
+    left: "22rem",
   }
 
 })

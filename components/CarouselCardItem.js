@@ -1,25 +1,13 @@
 import React from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TouchableHighlight } from "react-native"
+import Carhelper from './CarHelper'
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
-const CarouselCardItem = ({ item, index }) => {
-
+const CarouselCardItem = (item) => {
   return (
-    <View style={styles.container1} key={index}>
-      <TouchableHighlight style={styles.imageBox} underlayColor={'black'} onPress={() => console.log("Game Page redirect")}>
-        <Image
-          source={{ uri: item.imgUrl}}
-          style={styles.image}
-        />
-      </TouchableHighlight>
-      <Image style={styles.clock} source={null}/>
-      <Text style={styles.type}>{item.type}</Text>
-      <Text style={styles.body}>{item.body}</Text>
-      <Text style={styles.dur}></Text>
-
-    </View>
+    <Carhelper object={item}/>
   )
 }
 

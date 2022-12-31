@@ -6,6 +6,7 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import { UserStore }from "../redux/reducers/authenticator_reducer";
 import { refresh_store } from "../redux/reducers/access_token";
 import { access_store } from "../redux/reducers/access_token";
+import api from "../DatabaseConn"
 
 const LogInScreen = ({navigation} : {navigation: any}) => {
     const [user, setUser] = React.useState('');
@@ -21,7 +22,7 @@ const LogInScreen = ({navigation} : {navigation: any}) => {
             'Content-Type': 'application/json',
           },
         };
-        const res = await fetch('https://d6bb-61-247-34-131.ngrok.io/auth/signin', options);
+        const res = await fetch(api + '/auth/signin', options);
         const responseData : any = await res.json();
         return responseData;
       }

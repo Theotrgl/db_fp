@@ -1,4 +1,4 @@
-const data = [
+export const data = [
     {
       title: "mlbb",
       price: 90,
@@ -36,15 +36,37 @@ const data = [
       },
 ];
 
-export const profile = 
-  {
-    fullname: "Peter Nelson Subrata",
-    username: "Pewter",
-    email: "peterns1609@gmail.com",
-    password: "12345678",
-    phone: 62432432432423
+import React from "react";
+import api from "../DatabaseConn";
+
+export default getHomeItems = async () => {
+  let response = null;
+  const result = async () => {
+    try{
+      const options = {
+        method: 'GET',
+      };
+      const res = await fetch(api + '/game/all', options);
+      try{
+        const responseData = await res.json();
+        response = responseData;
+      } catch(err){
+        const res = await fetch(api + '/game/all', options);
+        const responseData = await res.json();
+        response = responseData;
+      }
+
+    }
+    catch(err){
+      console.log(err);
+    }
+
+    if(response.length === 0){
+      console.log('empty');
+    }
+
+    return response;
   }
 
-
-
-export default data;
+  return await result();
+};

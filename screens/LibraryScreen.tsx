@@ -7,7 +7,7 @@ import Navigation from "../navigation";
 import { useNavigation } from "@react-navigation/native";
 import { access_store } from "../redux/reducers/access_token";
 import ContentLoader, { FacebookLoader, InstagramLoader } from 'react-native-easy-content-loader';
-
+import api from "../DatabaseConn";
 
 const Item = (items : any) =>{
   const navigation = useNavigation();
@@ -26,13 +26,13 @@ const Item = (items : any) =>{
   }
   while (cont < items.items){
     output.push(
-      <TouchableHighlight underlayColor={'transparent'} onPress={() => navigation.navigate('LibGamePage', object)
+      <TouchableHighlight underlayColor={'transparent'} key={object.id} onPress={() => navigation.navigate('LibGamePage', object)
     }>
         <View style={styles.button}>
           <Image source={require('../assets/images/simple.jpg')} style={styles.image} />
           <Text style={styles.text}>{items.data !== undefined ? items.data[cont].title : "Undefined"}</Text>
-          <Text style={styles.text}>{items.data !== undefined ? items.data[cont].publisher : "Undefined"}</Text>
-          <Text style={styles.text}>{items.data !== undefined ? items.data[cont].developer : "Undefined"}</Text>
+          <Text style={styles.subText}>{items.data !== undefined ? items.data[cont].publisher : "Undefined"}</Text>
+          <Text style={styles.subText}>{items.data !== undefined ? items.data[cont].developer : "Undefined"}</Text>
         </View>
       </TouchableHighlight>
     );
@@ -42,13 +42,12 @@ const Item = (items : any) =>{
 };
 
 
-const Libheight = (6 * 8) + "rem";
-
 const LibraryScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
 
   const [response, setResponse] = React.useState('');
   const [showBox, setShowBox] = React.useState(true);
   const [isloading, setIsLoading] = React.useState(true);
+  const [render, setRender] = React.useState(false);
 
   const token = access_store.getState();
   const fetchData = async () =>  {
@@ -59,13 +58,13 @@ const LibraryScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
         'Authorization' : 'Bearer' + ' ' + token.access.access_token,
       },
     };
-    const res = await fetch('https://d6bb-61-247-34-131.ngrok.io/users/games', options);
+    const res = await fetch(api + '/users/games', options);
     try{
       const responseData : any = await res.json();
       return responseData;
     } catch(err){
       console.log(err);
-      const res = await fetch('https://d6bb-61-247-34-131.ngrok.io/users/games', options);
+      const res = await fetch(api + '/users/games', options);
       const responseData : any = await res.json();
       return responseData;
     }
@@ -95,23 +94,33 @@ const LibraryScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
 
   const items : number = response.length;
   const data : any = response;
+  const specialStyles = EStyleSheet.create({
+    libHeight: {
+      height : (response.length + 7.5) + "rem",
+    }
+  });
 
   return (
     <React.Fragment>
       <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Library</Text>
+        <TouchableHighlight style={styles.cartBox} underlayColor={'transparent'} onPress={() => navigation.navigate("CartPage")}>
+           <Image source={require('../assets/images/cart.png')} style={styles.cart}/>
+        </TouchableHighlight>
         </View>
 
         <ScrollView>
-          <View style={styles.lib}>
-            {isloading ? (<ContentLoader active={true}  pRows={5} title={false} pHeight={110} pWidth={360} />) : <Item items={items} data={data}/>}
+          <View style={specialStyles.libHeight}>
+            { data.length === 0 ? <Text style={styles.game}>You have no games</Text> : (isloading ? (<ContentLoader active={true}  pRows={5} title={false} pHeight={110} pWidth={390} />) : <Item items={items} data={data}/>)}
           </View>
         </ScrollView>
+        
       </SafeAreaView>
     </React.Fragment>
   );
 };
+
 
 const styles = EStyleSheet.create({
   header: {
@@ -126,10 +135,6 @@ const styles = EStyleSheet.create({
     paddingTop: "1rem",
     paddingLeft: "1rem",
     fontfamily: "comic Sans",
-  },
-
-  lib: {
-    height: Libheight,
   },
 
   button: {
@@ -148,6 +153,29 @@ const styles = EStyleSheet.create({
     fontSize: "1rem",
     left: "11rem",
     bottom: "5.5rem",
+  },
+
+  subText: {
+    fontSize: "0.7rem",
+    left: "11rem",
+    bottom: "5.5rem",
+  },
+
+  game:{
+    top: "2rem",
+    fontSize: "1.1rem",
+    alignSelf: "center",
+  },
+
+  cart : {
+    height: "2rem",
+    width: "2rem",
+  },
+
+  cartBox : {
+    position: 'absolute',
+    top: "1.7rem",
+    left: "22rem",
   }
 });
 export default LibraryScreen;

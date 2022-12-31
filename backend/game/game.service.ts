@@ -76,7 +76,7 @@ import { ConfigService } from '@nestjs/config';
       try {
         const game = await this.prisma.game.delete({
           where: {
-            id: id,
+            id: Number(id),
           },
         });
   
@@ -94,7 +94,7 @@ import { ConfigService } from '@nestjs/config';
       try {
         const game = await this.prisma.game.update({
           where: {
-            id: id,
+            id: Number(id),
           },
           data: {
             title: dto.title,
@@ -122,6 +122,10 @@ import { ConfigService } from '@nestjs/config';
           where: {
             id: id,
           },
+          include: {
+            genres: true,
+            platforms: true
+          }
         });
   
       } catch (error) {
@@ -136,7 +140,12 @@ import { ConfigService } from '@nestjs/config';
 
     async getAllGames() {
       try {
-        const game = await this.prisma.game.findMany();
+        const game = await this.prisma.game.findMany({
+          include: {
+            genres: true,
+            platforms: true,
+          }
+        });
         return game;
   
       } catch (error) {

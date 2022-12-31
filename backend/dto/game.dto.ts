@@ -21,7 +21,6 @@ import {
     @IsNotEmpty()
     publisher: string;
     
-    @IsString()
     @IsNotEmpty()
     images: any;
 

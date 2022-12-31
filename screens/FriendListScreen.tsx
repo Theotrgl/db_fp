@@ -3,18 +3,34 @@ import { View, Text, SafeAreaView, ScrollView, TouchableHighlight, Image } from 
 import { RootTabScreenProps } from "../types";
 import EStyleSheet from "react-native-extended-stylesheet";
 import SafeViewAndroid from "../components/SafeViewAndroid";
+import Navigation from "../navigation";
+import { useNavigation } from "@react-navigation/native";
+import { access_store } from "../redux/reducers/access_token";
+import ContentLoader, { FacebookLoader, InstagramLoader } from 'react-native-easy-content-loader';
+import api from "../DatabaseConn";
 
-const items = 10;
-
-const Item = () =>{
+const Item = (items : any) =>{
+  const navigation = useNavigation();
+  console.log(items.data);
   var cont = 0;
   var output = [];
-  while (cont < items){
+  const object : any = {
+    id: items.data[cont].id,
+    title: items.data[cont].title,
+    description: items.data[cont].description,
+    developer: items.data[cont].developer,
+    publisher: items.data[cont].publisher,
+    images: items.data[cont].images,
+    price: items.data[cont].price,
+    average_rating: items.data[cont].average_rating,
+  }
+  while (cont < items.items){
     output.push(
-      <TouchableHighlight underlayColor={'transparent'} onPress={() => console.log("Hello world")}>
+      <TouchableHighlight underlayColor={'transparent'} key={object.id} onPress={() => navigation.navigate('LibGamePage', object)
+    }>
         <View style={styles.button}>
           <Image source={require('../assets/images/simple.jpg')} style={styles.image} />
-          <Text style={styles.text}>Simple</Text>
+          <Text style={styles.text}>{items.data !== undefined ? items.data[cont].title : "Undefined"}</Text>
         </View>
       </TouchableHighlight>
     );
@@ -24,25 +40,84 @@ const Item = () =>{
 };
 
 
-const Friendheight = (items * 6) + "rem";
+const FriendListScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
 
-const FriendListScreen = ({ navigation }: RootTabScreenProps<"FriendList">) => {
+  const [response, setResponse] = React.useState('');
+  const [showBox, setShowBox] = React.useState(true);
+  const [isloading, setIsLoading] = React.useState(true);
+  const [render, setRender] = React.useState(false);
+
+  const token = access_store.getState();
+  const fetchData = async () =>  {
+  try{
+    const options = {
+      method: 'GET',
+      headers: {
+        'Authorization' : 'Bearer' + ' ' + token.access.access_token,
+      },
+    };
+    const res = await fetch(api + '/users/games', options);
+    try{
+      const responseData : any = await res.json();
+      return responseData;
+    } catch(err){
+      console.log(err);
+      const res = await fetch(api + '/users/games', options);
+      const responseData : any = await res.json();
+      return responseData;
+    }
+  }
+  catch(err){
+    console.log(err);
+  }
+}
+
+  async function main(){
+    const response : any = await fetchData();
+    console.log(await response);
+    if(response.length === 0){
+      console.log('empty');
+    }
+    setResponse(response);
+    if (response) {
+      setIsLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    console.log('useEffect');
+    main();
+  }
+  , []);
+
+  const items : number = response.length;
+  const data : any = response;
+  const specialStyles = EStyleSheet.create({
+    libHeight: {
+      height : (response.length + 7.5) + "rem",
+    }
+  });
+
   return (
     <React.Fragment>
       <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Friends</Text>
+          <TouchableHighlight style={styles.cartBox} underlayColor={'transparent'} onPress={() => navigation.navigate("CartPage")}>
+            <Image source={require('../assets/images/cart.png')} style={styles.cart}/>
+          </TouchableHighlight>
         </View>
 
         <ScrollView>
-          <View style={styles.lib}>
-           <Item/>
+          <View style={specialStyles.libHeight}>
+          { data.length === 0 ? <Text style={styles.friend}>You have no friends :(</Text> : (isloading ? (<ContentLoader active={true}  pRows={5} title={false} pHeight={110} pWidth={390} />) : <Item items={items} data={data}/>)}
           </View>
         </ScrollView>
       </SafeAreaView>
     </React.Fragment>
   );
 };
+
 
 const styles = EStyleSheet.create({
   header: {
@@ -59,28 +134,39 @@ const styles = EStyleSheet.create({
     fontfamily: "comic Sans",
   },
 
-  lib: {
-    height: Friendheight,
-  },
-
   button: {
     backgroundColor: 'white',
-    height: "4rem",
+    height: "6rem",
     margin: "1rem",
   },
 
   image: {
-    bordercolor: 'purple',
     left: "1rem",
-    width: "4rem",
-    height: "4rem",
+    width: "5rem",
+    height: "5rem",
   },
 
   text: {
-    fontSize: "1rem",
-    left: "6rem",
+    fontSize: "1.2rem",
+    left: "7rem",
     bottom: "3.5rem",
+  },
+
+  friend:{
+    top: "2rem",
+    fontSize: "1.1rem",
+    alignSelf: "center",
+  },
+
+  cart : {
+    height: "2rem",
+    width: "2rem",
+  },
+
+  cartBox : {
+    position: 'absolute',
+    top: "1.7rem",
+    left: "22rem",
   }
 });
-
 export default FriendListScreen;
