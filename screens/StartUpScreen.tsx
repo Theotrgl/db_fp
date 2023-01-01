@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { 
   View,
@@ -8,8 +9,52 @@ import {
      } from "react-native";
 import EStyleSheet from "react-native-extended-stylesheet";
 import { Button } from "react-native-paper";
+import { access_store, refresh_store } from "../redux/reducers/access_token";
+import { UserStore } from "../redux/reducers/authenticator_reducer";
+
+async function storeValue(value : string) {
+  await AsyncStorage.setItem('refresh_token', value);
+}
+
+async function retrieveValue() {
+  const refresh = await AsyncStorage.getItem('refresh_token');
+  return refresh;
+}
 
 const StartScreen = ({navigation} : {navigation : any}) => {
+
+  const fetchToken = async (refresh : string) =>  {
+    try {
+      const data = { token : refresh }
+      const options = {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      const res = await fetch(api + '/auth/refresh', options);
+      const responseData : any = await res.json();
+      return responseData;
+    }
+    catch(err){
+      alert("Connection Error");
+      console.log(err);
+    }
+  
+    };
+
+    React.useEffect(() => {
+      console.log('useEffect');
+      const token : any= retrieveValue();
+      if( token !== null && token.hasOwnProperty('access_token')){
+        const access : any = fetchToken(token);
+        access_store.dispatch({type: "UPDATE_VALUE", payload: access.access_token});
+        UserStore.dispatch({type: "login"});
+      }
+    }
+    , []);
+
   return (
     <React.Fragment>
       <View>

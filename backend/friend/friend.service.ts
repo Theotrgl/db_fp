@@ -95,44 +95,4 @@ import { create } from 'domain';
         throw error;
       }
     }
-
-    async getFriendList(id : number) {
-      try {
-        const friend = await this.prisma.friend_list.findMany({
-          where: {
-            a_id: Number(id),
-            accepted: true
-          },
-        });
-
-        return friend;
-
-      } catch (error) {
-        if (
-          error instanceof
-          PrismaClientKnownRequestError
-        ) 
-        throw error;
-      }
-    }
-
-    async getFriendRequest(id : number) {
-      try {
-        const friend = await this.prisma.friend_list.findMany({
-          where: {
-            a_id: Number(id),
-            accepted: false
-          },
-        });
-
-        return friend;
-
-      } catch (error) {
-        if (
-          error instanceof
-          PrismaClientKnownRequestError
-        ) 
-        throw error;
-      }
-    }
 }

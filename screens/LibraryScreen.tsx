@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, SafeAreaView, ScrollView, TouchableHighlight, Image } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, TouchableHighlight, Image, RefreshControl } from "react-native";
 import { RootTabScreenProps } from "../types";
 import EStyleSheet from "react-native-extended-stylesheet";
 import SafeViewAndroid from "../components/SafeViewAndroid";
@@ -9,45 +9,49 @@ import { access_store } from "../redux/reducers/access_token";
 import ContentLoader, { FacebookLoader, InstagramLoader } from 'react-native-easy-content-loader';
 import api from "../DatabaseConn";
 
-const Item = (items : any) =>{
-  const navigation = useNavigation();
-  console.log(items.data);
-  var cont = 0;
-  var output = [];
-  const object : any = {
-    id: items.data[cont].id,
-    title: items.data[cont].title,
-    description: items.data[cont].description,
-    developer: items.data[cont].developer,
-    publisher: items.data[cont].publisher,
-    images: items.data[cont].images,
-    price: items.data[cont].price,
-    average_rating: items.data[cont].average_rating,
-  }
-  while (cont < items.items){
-    output.push(
-      <TouchableHighlight underlayColor={'transparent'} key={object.id} onPress={() => navigation.navigate('LibGamePage', object)
-    }>
-        <View style={styles.button}>
-          <Image source={require('../assets/images/simple.jpg')} style={styles.image} />
-          <Text style={styles.text}>{items.data !== undefined ? items.data[cont].title : "Undefined"}</Text>
-          <Text style={styles.subText}>{items.data !== undefined ? items.data[cont].publisher : "Undefined"}</Text>
-          <Text style={styles.subText}>{items.data !== undefined ? items.data[cont].developer : "Undefined"}</Text>
-        </View>
-      </TouchableHighlight>
-    );
-    cont++;
-  }
-  return output;
-};
-
-
 const LibraryScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
 
   const [response, setResponse] = React.useState('');
   const [showBox, setShowBox] = React.useState(true);
   const [isloading, setIsLoading] = React.useState(true);
   const [render, setRender] = React.useState(false);
+  const [first, setFirst] = React.useState(true);
+
+  const Item = (items : any) =>{
+    const navigation = useNavigation();
+    var cont = 0;
+    var output = [];
+  
+    if(first){
+      while (cont < items.items){
+
+        const object : any = {
+          id: items.data[cont].id,
+          title: items.data[cont].title,
+          description: items.data[cont].description,
+          developer: items.data[cont].developer,
+          publisher: items.data[cont].publisher,
+          images: items.data[cont].images,
+          price: items.data[cont].price,
+          average_rating: items.data[cont].average_rating,
+        }
+
+        output.push(
+          <TouchableHighlight underlayColor={'transparent'} key={object.id} onPress={() => navigation.navigate('LibGamePage', object)
+        }>
+            <View style={styles.button}>
+              <Image source={{ uri : items.data[cont].images["1"]}} style={styles.image} />
+              <Text style={styles.text}>{items.data !== undefined ? items.data[cont].title : "Undefined"}</Text>
+              <Text style={styles.subText}>{items.data !== undefined ? items.data[cont].publisher : "Undefined"}</Text>
+              <Text style={styles.subText}>{items.data !== undefined ? items.data[cont].developer : "Undefined"}</Text>
+            </View>
+          </TouchableHighlight>
+        );
+        cont++;
+      }
+    return output;
+    }
+  };
 
   const token = access_store.getState();
   const fetchData = async () =>  {
@@ -76,7 +80,6 @@ const LibraryScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
 
   async function main(){
     const response : any = await fetchData();
-    console.log(await response);
     if(response.length === 0){
       console.log('empty');
     }
@@ -96,9 +99,24 @@ const LibraryScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
   const data : any = response;
   const specialStyles = EStyleSheet.create({
     libHeight: {
-      height : (response.length + 7.5) + "rem",
+      height : (response.length * 7.7) + "rem",
     }
   });
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    main();
+    const items : number = response.length;
+    const data : any = response;
+    const specialStyles = EStyleSheet.create({
+      libHeight: {
+       height : (response.length * 7.7) + "rem",
+    } 
+    });
+    setRefreshing(false);
+  }, []);
 
   return (
     <React.Fragment>
@@ -110,9 +128,9 @@ const LibraryScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
         </TouchableHighlight>
         </View>
 
-        <ScrollView>
+        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
           <View style={specialStyles.libHeight}>
-            { data.length === 0 ? <Text style={styles.game}>You have no games</Text> : (isloading ? (<ContentLoader active={true}  pRows={5} title={false} pHeight={110} pWidth={390} />) : <Item items={items} data={data}/>)}
+            { data.length === 0 ? <Text style={styles.game}>You have no games</Text> : (isloading ? (<ContentLoader active={true}  pRows={5} title={false} pHeight={110} pWidth={390} />) : (first ? <Item items={items} data={data}/> : (<ContentLoader active={true}  pRows={5} title={false} pHeight={110} pWidth={390} />)) )}
           </View>
         </ScrollView>
         

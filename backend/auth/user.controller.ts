@@ -26,7 +26,7 @@ import {
       return this.authService.signin(user, password);
     }
 
-    @Get('refresh')
+    @Post('refresh')
     refresh(@Body('token') token : string) {
       return this.authService.refresh(token);
     }

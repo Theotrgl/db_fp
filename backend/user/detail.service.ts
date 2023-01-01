@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
 import * as argon from 'argon2';
 import { AuthDto } from 'dto/auth.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
 export class UserService {
@@ -11,16 +12,18 @@ export class UserService {
 
   async editUser(
     userId: number,
-    dto: AuthDto,
+    userName: string,
+    password: string
   ) {
-    const hash = await argon.hash(dto.password);
+
+    console.log(userName)
+    const hash = await argon.hash(password);
     const user = await this.prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        email: String(dto.email),
-        username: String(dto.username),
+        username: String(userName),
         hash: String(hash),
       },
     });
@@ -30,12 +33,12 @@ export class UserService {
     return user;
   }
 
-  async addPaymentMethod (user : any, dto : PayDto) {
+  async addPaymentMethod (user : any, card_number : string, expiration_date : string, description : string) {
     const pay = await this.prisma.payment_method.create({
       data: {
-        description: String(dto.description),
-        card_number: String(dto.card_number),
-        expiration_date: String(dto.expiration_date),
+        description: String(description),
+        card_number: String(card_number),
+        expiration_date: String(expiration_date),
         user: {
           connect: { id: Number( user.id ) },    
         }
@@ -162,6 +165,18 @@ export class UserService {
   };
 
   async addToCart(userId: number, game_id: number) {
+    const validate = await this.prisma.cart.findMany({
+      where: {
+          user_id: Number(userId),
+        }
+    })
+
+    for(let i = 0; i < validate.length; i++) {
+      if(validate[i].game_id === Number(game_id)) {
+        return { message : "Already added to cart" };
+      }
+    }
+
     const user = await this.prisma.cart.create({
       data: {
         user:{ connect : { id : Number(userId)}},
@@ -231,10 +246,56 @@ export class UserService {
             id: Number(user),
           }
         },
+        include: {
+          game: true
+        }
       });
 
     return userTransactions;
 
+  }
+
+  async getFriendList(user : any) {
+    try {
+      const friend = await this.prisma.friend_list.findMany({
+        where: {
+          a_id: Number(user.id),
+          accepted: true
+        },
+        include: {
+          b: true
+        }
+      });
+
+      return friend;
+ 
+    } catch (error) {
+      if (
+        error instanceof
+        PrismaClientKnownRequestError
+      ) 
+      throw error;
+    }
+  }
+
+  async getFriendRequest(user : any) {
+    try {
+      const friend = await this.prisma.friend_list.findMany({
+        where: {
+          a_id: Number(user.id),
+          accepted: false
+        },
+      });
+
+      return friend;
+
+    } catch (error) {
+      if (
+        error instanceof
+        PrismaClientKnownRequestError
+      ) 
+      throw error;
+    }
   }
 
 }

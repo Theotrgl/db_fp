@@ -5,40 +5,40 @@ import { View, Text, StyleSheet, Dimensions, Image, TouchableHighlight } from "r
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
-const Carhelper = (prop) => {
+const SpecialCarhelper = (prop) => {
   const item = prop.object;
   const navigation = useNavigation();
 
   let genres = [];
   let cont = 0;
-  while(item.item.genres.length > cont){
-    genres.push(item.item.genres[cont].name.toUpperCase() + " ");
+  while(item.item.game.genres.length > cont){
+    genres.push(item.item.game.genres[cont].name.toUpperCase() + " ");
     cont += 1;
   }
 
   const object = {
-    id: item.item.id,
-    title: item.item.title,
-    description: item.item.description,
-    developer: item.item.developer,
-    publisher: item.item.publisher,
-    images: item.item.images,
+    id: item.item.game.id,
+    title: item.item.game.title,
+    description: item.item.game.description,
+    developer: item.item.game.developer,
+    publisher: item.item.game.publisher,
+    images: item.item.game.images,
     genre: genres,
-    price: item.item.price,
-    average_rating: item.item.average_rating,
+    price: item.item.game.price,
+    average_rating: item.item.game.average_rating,
   }
 
   return (
     <View style={styles.container1} key={item.index}>
       <TouchableHighlight style={styles.imageBox} underlayColor={'black'} onPress={() => navigation.navigate("GamePage", object)}>
         <Image
-          source={{ uri: item.item.images[1]}}
+          source={{ uri: item.item.game.images[1]}}
           style={styles.image}
         />
       </TouchableHighlight>
       <Image style={styles.clock} source={null}/>
       <Text style={styles.type}>{genres}</Text>
-      <Text style={styles.body}>{item.item.title}</Text>
+      <Text style={styles.body}>{item.item.game.title}</Text>
       <Text style={styles.dur}></Text>
 
     </View>
@@ -120,4 +120,4 @@ const styles = StyleSheet.create({
     }
   })
 
-export default Carhelper;
+export default SpecialCarhelper;

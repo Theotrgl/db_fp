@@ -34,22 +34,9 @@ const LibGamePageScreen = ({ route } : any) => {
             var {x, y, width, height} = event.nativeEvent.layout;
           }}>
           <Text style={styles.features}>{title}</Text>
-          <GameCards />
+          <GameCards image={images} />
           <Text style={styles.des}>Description</Text>
           <Text style={styles.details}>{description.length > 360 ? description.substr(0,350) + "..." : description}</Text> 
-          <Text style={styles.more}>Developer : {developer}</Text>
-          <Text style={styles.more}>Publisher : {publisher}</Text>
-          <Text style={styles.more}>Genre :</Text>
-          <Text style={styles.more}>Price : {price}</Text>
-          <Text style={styles.rating}>Rating : {average_rating}</Text>
-          <Text style={styles.reviews}>Reviews</Text>
-          <TouchableOpacity style={styles.review}>
-            <View>
-              <Text style={styles.reviewText}>This game is awesome!</Text>
-              <Text style={styles.reviewText}>- John Doe</Text>
-
-            </View>
-          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -79,7 +66,7 @@ const styles = EStyleSheet.create({
   },
 
   container:{
-    height: "64rem",
+    height: "50rem",
   },
 
   features: {

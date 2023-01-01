@@ -1,20 +1,13 @@
 import React from 'react'
 import { View, Text, StyleSheet, Dimensions, Image, TouchableHighlight } from "react-native"
+import SpecialCarhelper from './SpecialCarHelper'
 
 export const SLIDER_WIDTH = Dimensions.get('window').width + 80
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
-const GameCardItem = (item) => {
-  let index = 2;
+const SpecialCardItem = (item) => {
   return (
-    <View style={styles.container1} key={index}>
-      <TouchableHighlight style={styles.imageBox} underlayColor={'black'} onPress={() => console.log("Game Page redirect")}>
-        <Image
-          source={{ uri: item.item[String(index)]}}
-          style={styles.image}
-        />
-      </TouchableHighlight>
-    </View>
+    <SpecialCarhelper object={item}/>
   )
 }
 
@@ -25,7 +18,7 @@ const styles = StyleSheet.create({
     height: 200,
     right: 40,
     backgroundColor: 'white',
-    borderRadius: 1,
+    borderRadius: 10,
     width: ITEM_WIDTH,
     shadowColor: "#000",
     shadowOffset: {
@@ -93,4 +86,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default GameCardItem
+export default SpecialCardItem

@@ -35,14 +35,4 @@ import {
     getFriendState(a_id : number, b_id : number) {
         return this.friendService.getFriendState(a_id, b_id);
         }
-
-    @Get('list')
-    getFriendList(@Body('id') id : number) {
-        return this.friendService.getFriendList(id);
-        }
-
-    @Get('request')
-    getFriendRequest(@Body('id') id : number) {
-        return this.friendService.getFriendRequest(id);
-        }    
   }

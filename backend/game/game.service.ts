@@ -90,6 +90,40 @@ import { ConfigService } from '@nestjs/config';
       }
     }
 
+    async createSales(id : number, discount : number){
+      try {
+        const game = await this.prisma.on_sale.create({
+          data: {
+            game : { connect : { id: Number(id), }},
+            discount : Number(discount)
+          }
+      })
+    } catch (error) {
+      if (
+        error instanceof
+        PrismaClientKnownRequestError
+      ) 
+      
+      throw error;
+    }
+
+    return { message: 'Create sales',}
+  }
+
+    async getSales() {
+      const sales = await this.prisma.on_sale.findMany({
+        include: {
+          game: {
+            include : {
+              genres: true
+            }
+          }
+        }
+    });
+
+      return sales;
+    }
+
     async updateGame(dto: GameDto, id : number) {
       try {
         const game = await this.prisma.game.update({
@@ -120,13 +154,15 @@ import { ConfigService } from '@nestjs/config';
       try {
         const game = await this.prisma.game.findUnique({
           where: {
-            id: id,
+            id: Number(id),
           },
           include: {
             genres: true,
             platforms: true
           }
-        });
+        })
+        
+        return game;
   
       } catch (error) {
         if (
@@ -136,6 +172,7 @@ import { ConfigService } from '@nestjs/config';
         
         throw error;
       }
+
     }
 
     async getAllGames() {

@@ -31,8 +31,8 @@ import { AuthDto } from 'dto/auth.dto';
     }
 
     @Post('addpaymentmethod')
-    addPaymentMethod(@GetUser() user : any ,@Body() dto : PayDto) {
-      return this.userService.addPaymentMethod(user, dto);
+    addPaymentMethod(@GetUser() user : any ,@Body('card') card : string, @Body('exp') exp : string, @Body('description') description : string) {
+      return this.userService.addPaymentMethod(user, card, exp, description);
     }
 
     @Post('addcart')
@@ -81,8 +81,8 @@ import { AuthDto } from 'dto/auth.dto';
     }
   
     @Patch('update')
-    editUser(@GetUser() userId: any, @Body() dto: AuthDto) {
-      return this.userService.editUser(userId.id, dto);
+    editUser(@GetUser() userId: any, @Body('name') user : string, @Body('password') password : string) {
+      return this.userService.editUser(userId.id, user, password);
     }
 
     @Get('paymentmethods')
@@ -94,6 +94,16 @@ import { AuthDto } from 'dto/auth.dto';
     getTransactions(@GetUser() user: any) {
       return this.userService.getTransactions(user.id);
     }
+
+    @Get('friendlist')
+    getFriendList(@GetUser() user : any) {
+        return this.userService.getFriendList(user);
+        }
+
+    @Get('friendrequest')
+    getFriendRequest(@GetUser() user : any) {
+        return this.userService.getFriendRequest(user);
+        }    
 
   }
   

@@ -14,23 +14,20 @@ const Item = (items : any) =>{
   console.log(items.data);
   var cont = 0;
   var output = [];
-  const object : any = {
-    id: items.data[cont].id,
-    title: items.data[cont].title,
-    description: items.data[cont].description,
-    developer: items.data[cont].developer,
-    publisher: items.data[cont].publisher,
-    images: items.data[cont].images,
-    price: items.data[cont].price,
-    average_rating: items.data[cont].average_rating,
-  }
+
   while (cont < items.items){
+
+    const object : any = {
+      id: items.data[cont].id,
+      friend : items.data[cont].b.username
+    }
+    
     output.push(
       <TouchableHighlight underlayColor={'transparent'} key={object.id} onPress={() => navigation.navigate('LibGamePage', object)
     }>
         <View style={styles.button}>
           <Image source={require('../assets/images/simple.jpg')} style={styles.image} />
-          <Text style={styles.text}>{items.data !== undefined ? items.data[cont].title : "Undefined"}</Text>
+          <Text style={styles.text}>{object.friend !== undefined ? object.friend : "Undefined"}</Text>
         </View>
       </TouchableHighlight>
     );
@@ -56,13 +53,13 @@ const FriendListScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
         'Authorization' : 'Bearer' + ' ' + token.access.access_token,
       },
     };
-    const res = await fetch(api + '/users/games', options);
+    const res = await fetch(api + '/users/friendlist', options);
     try{
       const responseData : any = await res.json();
       return responseData;
     } catch(err){
       console.log(err);
-      const res = await fetch(api + '/users/games', options);
+      const res = await fetch(api + '/users/friendlist', options);
       const responseData : any = await res.json();
       return responseData;
     }
@@ -94,7 +91,7 @@ const FriendListScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
   const data : any = response;
   const specialStyles = EStyleSheet.create({
     libHeight: {
-      height : (response.length + 7.5) + "rem",
+      height : 900,
     }
   });
 

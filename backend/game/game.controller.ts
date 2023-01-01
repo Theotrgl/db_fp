@@ -16,8 +16,12 @@ import {
   
     @Post('create')
     create(@Body() dto: GameDto) {
-      console.log(dto);
       return this.gameService.createGame(dto);
+    }
+
+    @Post('createsale')
+    createSales(@Body('game') game_id : number, @Body('discount') discount : number){
+      return this.gameService.createSales(game_id, discount);
     }
   
     @Post('delete')
@@ -26,12 +30,12 @@ import {
     }
 
     @Post('update')
-    update(@Body() dto: GameDto, id: number) {
+    update(@Body('game') dto: GameDto, id: number) {
       return this.gameService.updateGame(dto, id);
     }
 
-    @Get('me')
-    getMe(id : number) {
+    @Post('getgame')
+    getMe(@Body('game') id : number) {
       return this.gameService.getGame(id);
     } 
 
@@ -49,4 +53,10 @@ import {
     all() {
       return this.gameService.getAllGames();
     }
+
+    @Get('allsales')
+    sales(){
+      return this.gameService.getSales();
+    }
+
   }

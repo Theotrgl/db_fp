@@ -6,6 +6,8 @@ import { Searchbar, Chip, Button } from "react-native-paper";
 import GameCards from "../components/GameCards";
 import EStyleSheet from 'react-native-extended-stylesheet';
 import SafeViewAndroid from "../components/SafeViewAndroid";
+import { access_store } from "../redux/reducers/access_token";
+import api from "../DatabaseConn";
 import { MaterialIcons } from '@expo/vector-icons';
 
 
@@ -16,6 +18,46 @@ export const GamePageScreen = ({ route } : any) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isSearchModalVisible, setIsSearchVisible] = React.useState(false);
   const navigation = useNavigation();
+  const token = access_store.getState();
+
+  const sendData = async (id : number) => {
+    let response : any = null;
+    const data = { game: id };
+    const result = async (data : any) => {
+      try{
+        const options = {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization' : 'Bearer' + ' ' + token.access.access_token,
+          },
+
+        };
+        const res = await fetch(api + '/users/addcart', options);
+        try{
+          const responseData = await res.json();
+          response = responseData;
+        } catch(err){
+          const res = await fetch(api + '/users/addcart', options);
+          const responseData = await res.json();
+          response = responseData;
+        }
+  
+      }
+      catch(err){
+        console.log(err);
+      }
+  
+      if(response.length === 0){
+        console.log('empty');
+      }
+  
+      return response;
+    }
+  
+    return await result(data);
+  };
 
   return (
     <React.Fragment>
@@ -25,7 +67,9 @@ export const GamePageScreen = ({ route } : any) => {
           <TouchableHighlight style={styles.arrowBox} underlayColor={'transparent'} onPress={() => navigation.goBack()}>
             <Image source={require('../assets/images/arrow-back.png')} style={styles.arrow}/>
           </TouchableHighlight>
-          <Image source={require('../assets/images/cart.png')} style={styles.cart}/>
+          <TouchableHighlight style={styles.cartBox} underlayColor={'transparent'} onPress={() => navigation.navigate("CartPage")}>
+            <Image source={require('../assets/images/cart.png')} style={styles.cart}/>
+          </TouchableHighlight>
         </View>
         <View style={[styles.container,{}]} onLayout={(event) => {
             var {x, y, width, height} = event.nativeEvent.layout;
@@ -37,7 +81,7 @@ export const GamePageScreen = ({ route } : any) => {
           <Text style={styles.more}>Developer : {developer}</Text>
           <Text style={styles.more}>Publisher : {publisher}</Text>
           <Text style={styles.more}>Genre : {genre}</Text>
-          <Text style={styles.more}>Price : {price == 0 ? "Free" : price}</Text>
+          <Text style={styles.more}>Price : {price == 0 ? "Free" : price + ".000 IDR"}</Text>
           <Text style={styles.rating}>Rating : {average_rating}</Text>
           <Text style={styles.reviews}>Reviews</Text>
           <TouchableOpacity style={styles.review}>
@@ -55,7 +99,11 @@ export const GamePageScreen = ({ route } : any) => {
       <Button 
             uppercase={false}
             color={'white'}
-            style={styles.button}>
+            style={styles.button}
+            onPress={() => { 
+              alert('Game added to cart');
+              sendData(id) }}
+            >
             Get</Button>
       </View>
       </SafeAreaView>
@@ -174,9 +222,12 @@ const styles = EStyleSheet.create({
   },
 
   cart : {
-    position: 'absolute',
     height: "2rem",
     width: "2rem",
+  },
+
+  cartBox : {
+    position: 'absolute',
     top: "1.7rem",
     left: "22rem",
   },

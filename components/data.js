@@ -70,3 +70,35 @@ export default getHomeItems = async () => {
 
   return await result();
 };
+
+export const getSpecialItems = async () => {
+  let response = null;
+  const result = async () => {
+    try{
+      const options = {
+        method: 'GET',
+      };
+      const res = await fetch(api + '/game/allsales', options);
+      try{
+        const responseData = await res.json();
+        response = responseData;
+      } catch(err){
+        const res = await fetch(api + '/game/allsales', options);
+        const responseData = await res.json();
+        response = responseData;
+      }
+
+    }
+    catch(err){
+      console.log(err);
+    }
+
+    if(response.length === 0){
+      console.log('empty');
+    }
+
+    return response;
+  }
+
+  return await result();
+};

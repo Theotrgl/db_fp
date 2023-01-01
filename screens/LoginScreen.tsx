@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, TouchableHighlight, Image } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, TouchableHighlight, Image} from "react-native";
 import { RootTabScreenProps } from "../types";
 import { TextInput, Button} from "react-native-paper";
 import EStyleSheet from 'react-native-extended-stylesheet';
@@ -7,6 +7,7 @@ import { UserStore }from "../redux/reducers/authenticator_reducer";
 import { refresh_store } from "../redux/reducers/access_token";
 import { access_store } from "../redux/reducers/access_token";
 import api from "../DatabaseConn"
+
 
 const LogInScreen = ({navigation} : {navigation: any}) => {
     const [user, setUser] = React.useState('');
