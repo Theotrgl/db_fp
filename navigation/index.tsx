@@ -23,7 +23,7 @@ import HomeScreen from "../screens/HomeScreen";
 import ModalScreen from "../screens/ModalScreen";
 import NotFoundScreen from "../screens/NotFoundScreen";
 import GamePageScreen from "../screens/GamePage";
-import LibGamePageScreen  from "../screens/LibraryGamePage";
+import LibGamePageScreen from "../screens/LibraryGamePage";
 import {
   RootStackParamList,
   RootTabParamList,
@@ -42,30 +42,32 @@ import { UserStore } from "../redux/reducers/authenticator_reducer";
 import CameraPage from "../screens/Camera";
 import CartPageScreen from "../screens/CartScreen";
 
-export default function Navigation({ colorScheme,}: { colorScheme: ColorSchemeName;}) {
+export default function Navigation({
+  colorScheme,
+}: {
+  colorScheme: ColorSchemeName;
+}) {
   //possible change needed for re rendering method of the app of code below, unlikely to be future proof
   const [render, setRender] = React.useState(false);
-  
+
   UserStore.subscribe(() => {
-    let authentication : boolean = UserStore.getState().authen.authentication;
+    let authentication: boolean = UserStore.getState().authen.authentication;
     setRender(authentication);
   });
 
   //this code below too
-  console.log(render)
-  //ternary operator used to check if user is authenticated and logged in 
+  console.log(render);
+  //ternary operator used to check if user is authenticated and logged in
   //next few attempts should direct it immediately to the home page
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === "light" ? DarkTheme : DefaultTheme}>
+      theme={colorScheme === "light" ? DarkTheme : DefaultTheme}
+    >
       {render ? <RootNavigator /> : <AuthenticationPages />}
     </NavigationContainer>
   );
-
 }
-
-
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -97,6 +99,11 @@ function RootNavigator() {
         component={CartPageScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -117,7 +124,7 @@ export function BottomTabNavigator() {
     <BottomTab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarStyle: {height: "9%", paddingBottom: 8},
+        tabBarStyle: { height: "9%", paddingBottom: 8 },
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}
     >
@@ -128,7 +135,7 @@ export function BottomTabNavigator() {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          tabBarActiveTintColor: 'black',
+          tabBarActiveTintColor: "black",
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate("Modal")}
@@ -153,8 +160,7 @@ export function BottomTabNavigator() {
           headerShown: false,
           title: "Library",
           tabBarIcon: ({ color }) => <TabBarIcon name="book" color={color} />,
-          tabBarActiveTintColor: 'black',
-
+          tabBarActiveTintColor: "black",
         }}
       />
       <BottomTab.Screen
@@ -164,8 +170,7 @@ export function BottomTabNavigator() {
           headerShown: false,
           title: "Friends",
           tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
-          tabBarActiveTintColor: 'black',
-
+          tabBarActiveTintColor: "black",
         }}
       />
       <BottomTab.Screen
@@ -175,8 +180,7 @@ export function BottomTabNavigator() {
           headerShown: false,
           title: "Profile",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-          tabBarActiveTintColor: 'black',
-
+          tabBarActiveTintColor: "black",
         }}
       />
     </BottomTab.Navigator>
@@ -193,26 +197,17 @@ function TabBarIcon(props: {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
 
-
 const StartStack = createNativeStackNavigator();
 
 //authentication pages for connection to find a suitable correlation in the database
 export const AuthenticationPages = () => {
   return (
-      <StartStack.Navigator
-        screenOptions={{ headerShown: false }}
-        >
-        <StartStack.Screen
-         name="Start" 
-         component={StartScreen} />
-         
-         <StartStack.Screen
-         name="SignUp" 
-         component={SignUpScreen} />
+    <StartStack.Navigator screenOptions={{ headerShown: false }}>
+      <StartStack.Screen name="Start" component={StartScreen} />
 
-         <StartStack.Screen
-         name="Login" 
-         component={LogInScreen} />
-      </StartStack.Navigator>
+      <StartStack.Screen name="SignUp" component={SignUpScreen} />
+
+      <StartStack.Screen name="Login" component={LogInScreen} />
+    </StartStack.Navigator>
   );
-}
+};
