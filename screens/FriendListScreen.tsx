@@ -138,7 +138,7 @@ const FriendListScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
 
   React.useEffect(() => {
     getUsers();
-  }, [searchQuery]);
+  }, [searchQuery, refresh]);
 
   const isFriend = (user: any) => {
     if (!user.friends && !user.symmetricfriends) {
@@ -161,7 +161,9 @@ const FriendListScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
     try {
       const response = await fetch(`${api}/friend/add`, {
         method: "POST",
+
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Beaerer ${token.access.access_token}`,
         },
         body: JSON.stringify({ a_id: id, b_id, accepted: true }),
@@ -251,6 +253,7 @@ const FriendListScreen = ({ navigation }: RootTabScreenProps<"Library">) => {
                         ]}
                         onPress={async () => {
                           await addFriend(user.id);
+                          setRefresh((prev) => prev + 1);
                         }}
                         disabled={isFriend(user) || id === user.id}
                       >
